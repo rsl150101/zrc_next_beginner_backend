@@ -34,7 +34,7 @@ const test: DBConfig = {
 const production: DBConfig = {
   username: process.env.MYSQL_USERNAME!,
   password: process.env.MYSQL_PASSWORD!,
-  database: process.env.MYSQL_DATABASE_PRODUCTIO!,
+  database: process.env.MYSQL_DATABASE_PRODUCTION!,
   host: process.env.MYSQL_HOST!,
   dialect: "mysql",
 };
