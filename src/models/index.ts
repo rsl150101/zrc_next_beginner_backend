@@ -1,16 +1,15 @@
 import { Sequelize } from "sequelize";
 import config from "../config/config";
+import { initUser } from "./user";
+import { initPost } from "./post";
+import { initComment } from "./comment";
+import { initHashtag } from "./hashtag";
+import { initImage } from "./image";
 
 type Env = "development" | "test" | "production";
 
-interface IDB {
-  [key: string]: any;
-  sequelize?: Sequelize;
-}
-
 const env: Env = (process.env.NODE_ENV as Env) || "development";
 const configEnv = config[env];
-const db: IDB = {};
 
 const sequelize = new Sequelize(
   configEnv.database,
@@ -19,6 +18,10 @@ const sequelize = new Sequelize(
   configEnv
 );
 
-db.sequelize = sequelize;
+initUser(sequelize);
+initPost(sequelize);
+initComment(sequelize);
+initHashtag(sequelize);
+initImage(sequelize);
 
-module.exports = db;
+export default sequelize;
