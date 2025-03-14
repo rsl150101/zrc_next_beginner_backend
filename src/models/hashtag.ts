@@ -1,5 +1,4 @@
 import {
-  CreateOptions,
   CreationOptional,
   DataTypes,
   InferAttributes,
@@ -12,7 +11,7 @@ class Hashtag extends Model<
   InferAttributes<Hashtag>,
   InferCreationAttributes<Hashtag>
 > {
-  declare id: CreateOptions<number>;
+  declare id: CreationOptional<number>;
   declare name: string;
   declare createdAt: CreationOptional<Date>;
   declare updatedAt: CreationOptional<Date>;

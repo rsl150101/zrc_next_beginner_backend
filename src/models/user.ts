@@ -1,5 +1,4 @@
 import {
-  CreateOptions,
   CreationOptional,
   DataTypes,
   InferAttributes,
@@ -9,7 +8,7 @@ import {
 } from "sequelize";
 
 class User extends Model<InferAttributes<User>, InferCreationAttributes<User>> {
-  declare id: CreateOptions<number>;
+  declare id: CreationOptional<number>;
   declare email: string;
   declare nickname: string;
   declare password: string;

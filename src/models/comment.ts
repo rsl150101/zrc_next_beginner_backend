@@ -1,5 +1,4 @@
 import {
-  CreateOptions,
   CreationOptional,
   DataTypes,
   InferAttributes,
@@ -12,7 +11,7 @@ class Comment extends Model<
   InferAttributes<Comment>,
   InferCreationAttributes<Comment>
 > {
-  declare id: CreateOptions<number>;
+  declare id: CreationOptional<number>;
   declare nickname: string;
   declare content: string;
   declare createdAt: CreationOptional<Date>;

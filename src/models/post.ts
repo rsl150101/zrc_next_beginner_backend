@@ -1,5 +1,4 @@
 import {
-  CreateOptions,
   CreationOptional,
   DataTypes,
   InferAttributes,
@@ -9,7 +8,7 @@ import {
 } from "sequelize";
 
 class Post extends Model<InferAttributes<Post>, InferCreationAttributes<Post>> {
-  declare id: CreateOptions<number>;
+  declare id: CreationOptional<number>;
   declare nickname: string;
   declare content: string;
   declare createdAt: CreationOptional<Date>;

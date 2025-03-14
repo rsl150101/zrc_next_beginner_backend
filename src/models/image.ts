@@ -1,5 +1,4 @@
 import {
-  CreateOptions,
   CreationOptional,
   DataTypes,
   InferAttributes,
@@ -12,7 +11,7 @@ class Image extends Model<
   InferAttributes<Image>,
   InferCreationAttributes<Image>
 > {
-  declare id: CreateOptions<number>;
+  declare id: CreationOptional<number>;
   declare src: string;
   declare createdAt: CreationOptional<Date>;
   declare updatedAt: CreationOptional<Date>;
