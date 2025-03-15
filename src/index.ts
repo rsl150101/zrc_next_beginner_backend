@@ -1,6 +1,9 @@
 import express from "express";
 import dotenv from "dotenv";
 import cors from "cors";
+import cookieParser from "cookie-parser";
+import session from "express-session";
+import passport from "passport";
 
 dotenv.config();
 
@@ -29,6 +32,16 @@ app.use(
     credentials: true,
   })
 );
+app.use(cookieParser(process.env.COOKIE_SECRET));
+app.use(
+  session({
+    secret: process.env.COOKIE_SECRET!,
+    saveUninitialized: false,
+    resave: false,
+  })
+);
+app.use(passport.initialize());
+app.use(passport.session());
 
 app.set("port", process.env.PORT || 3065);
 
