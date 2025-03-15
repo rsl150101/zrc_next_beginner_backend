@@ -1,11 +1,43 @@
 import express from "express";
 import bcrypt from "bcrypt";
+import passport from "passport";
 
 import db from "../models";
+
+interface IUser {
+  id: number;
+  email: string;
+  nickname: string;
+  password: string;
+  createdAt?: Date;
+  updatedAt?: Date;
+}
 
 const { User } = db;
 
 const router = express.Router();
+
+router.post("/login", (req, res, next) => {
+  passport.authenticate(
+    "local",
+    (err: any, user: IUser, info: { message: string }) => {
+      if (err) {
+        next(err);
+      }
+
+      if (info) {
+        return res.status(403).send(info.message);
+      }
+
+      return req.login(user, async (loginErr) => {
+        if (loginErr) {
+          return next(loginErr);
+        }
+        return res.json(user);
+      });
+    }
+  )(req, res, next);
+});
 
 router.post("/", async (req, res, next) => {
   try {

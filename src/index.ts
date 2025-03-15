@@ -6,8 +6,18 @@ dotenv.config();
 
 import db from "./models";
 import userRouter from "./routes/user.routes";
+import passportConfig from "./passport";
 
 const app = express();
+
+db.sequelize
+  ?.sync()
+  .then(() => {
+    console.log("Connect DB");
+  })
+  .catch(console.error);
+
+passportConfig();
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -19,13 +29,6 @@ app.use(
     credentials: true,
   })
 );
-
-db.sequelize
-  ?.sync()
-  .then(() => {
-    console.log("Connect DB");
-  })
-  .catch(console.error);
 
 app.set("port", process.env.PORT || 3065);
 
