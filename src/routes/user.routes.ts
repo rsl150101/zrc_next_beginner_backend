@@ -3,12 +3,13 @@ import bcrypt from "bcrypt";
 import passport from "passport";
 
 import db from "../models";
+import { isLoggedIn, isNotLoggedIn } from "../middlewares/auth";
 
 const { User, Post } = db;
 
 const router = express.Router();
 
-router.post("/login", (req, res, next) => {
+router.post("/login", isNotLoggedIn, (req, res, next) => {
   passport.authenticate(
     "local",
     (err: any, user: Express.User, info: { message: string }) => {
@@ -44,23 +45,16 @@ router.post("/login", (req, res, next) => {
   )(req, res, next);
 });
 
-router.post("/logout", (req, res, next) => {
+router.post("/logout", isLoggedIn, (req, res, next) => {
   req.logOut((err) => {
     if (err) {
       return next(err);
     }
-    res.redirect("/");
+    res.send("Ok");
   });
-  req.session.destroy((err) => {
-    if (err) {
-      return next(err);
-    }
-    res.redirect("/");
-  });
-  res.send("Ok");
 });
 
-router.post("/", async (req, res, next) => {
+router.post("/", isNotLoggedIn, async (req, res, next) => {
   try {
     const exUser = await User.findOne({
       where: {
