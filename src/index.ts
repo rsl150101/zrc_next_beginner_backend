@@ -8,8 +8,10 @@ import passport from "passport";
 dotenv.config();
 
 import db from "./models";
-import userRouter from "./routes/user.routes";
 import passportConfig from "./passport";
+
+import userRouter from "./routes/user.routes";
+import postRouter from "./routes/post.routes";
 
 const app = express();
 
@@ -46,6 +48,7 @@ app.use(passport.session());
 app.set("port", process.env.PORT || 3065);
 
 app.use("/user", userRouter);
+app.use("/post", postRouter);
 
 const handleListenServer = () => {
   console.log(`Listening on http://localhost:${app.get("port")}`);
