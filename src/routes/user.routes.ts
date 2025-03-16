@@ -4,7 +4,7 @@ import passport from "passport";
 
 import db from "../models";
 
-const { User } = db;
+const { User, Post } = db;
 
 const router = express.Router();
 
@@ -24,7 +24,21 @@ router.post("/login", (req, res, next) => {
         if (loginErr) {
           return next(loginErr);
         }
-        return res.status(200).json(user);
+        const fulluserWithoutPassword = await User.findOne({
+          where: { id: user.id },
+          attributes: { exclude: ["password"] },
+          include: [
+            {
+              model: Post,
+            },
+            { model: User, as: "Followings" },
+            {
+              model: User,
+              as: "Followers",
+            },
+          ],
+        });
+        return res.status(200).json(fulluserWithoutPassword);
       });
     }
   )(req, res, next);
