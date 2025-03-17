@@ -3,7 +3,7 @@ import express from "express";
 import db from "../models";
 import { isLoggedIn } from "../middlewares/auth";
 
-const { Post, Comment } = db;
+const { Post, Comment, Image, User } = db;
 const router = express.Router();
 
 router.post("/", isLoggedIn, async (req, res, next) => {
@@ -14,7 +14,18 @@ router.post("/", isLoggedIn, async (req, res, next) => {
       UserId: req.user?.id,
     });
 
-    res.status(201).json(post);
+    const fullPost = await Post.findOne({
+      where: { id: post.id },
+      include: [
+        {
+          model: Image,
+        },
+        { model: Comment },
+        { model: User, attributes: { exclude: ["password"] } },
+      ],
+    });
+
+    res.status(201).json(fullPost);
   } catch (error) {
     next(error);
   }
