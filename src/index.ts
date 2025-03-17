@@ -12,6 +12,7 @@ import passportConfig from "./passport";
 
 import userRouter from "./routes/user.routes";
 import postRouter from "./routes/post.routes";
+import postsRouter from "./routes/posts.routes";
 
 const app = express();
 
@@ -49,6 +50,7 @@ app.set("port", process.env.PORT || 3065);
 
 app.use("/user", userRouter);
 app.use("/post", postRouter);
+app.use("/posts", postsRouter);
 
 const handleListenServer = () => {
   console.log(`Listening on http://localhost:${app.get("port")}`);
