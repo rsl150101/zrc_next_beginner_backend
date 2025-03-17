@@ -41,9 +41,9 @@ class Post extends Model<InferAttributes<Post>, InferCreationAttributes<Post>> {
     Post.belongsTo(models.User);
     Post.belongsToMany(models.Hashtag, { through: "PostHashtag" });
     Post.belongsToMany(models.User, { through: "Like", as: "Likers" });
-    Post.belongsTo(models.Post);
+    Post.belongsTo(models.Post, { as: "Retweet" });
     Post.hasMany(models.Comment);
-    Post.hasMany(models.Image, { as: "Retweet" });
+    Post.hasMany(models.Image);
   }
 }
 
