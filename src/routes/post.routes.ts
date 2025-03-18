@@ -22,6 +22,7 @@ router.post("/", isLoggedIn, async (req, res, next) => {
         },
         { model: Comment },
         { model: User, attributes: { exclude: ["password"] } },
+        { model: User, as: "Likers", attributes: ["id"] },
       ],
     });
 
@@ -49,10 +50,44 @@ router.post("/:postId/comment", isLoggedIn, async (req, res, next) => {
       PostId: parseInt(req.params.postId, 10),
     });
 
-    res.status(201).json(comment);
+    const fullComment = await Comment.findOne({
+      where: { id: comment.id },
+      include: [{ model: User, attributes: ["id", "nickname"] }],
+    });
+
+    res.status(201).json(fullComment);
   } catch (error) {
     next(error);
   }
 });
+
+router
+  .route("/:postId/like")
+  .patch(async (req, res, next) => {
+    try {
+      const post = await Post.findOne({ where: { id: req.params.postId } });
+      if (!post) {
+        res.status(403).send("Not exist post.");
+        return;
+      }
+      await post.addLikers(req.user?.id);
+      res.json({ PostId: post.id, UserId: req.user?.id });
+    } catch (error) {
+      next(error);
+    }
+  })
+  .delete(async (req, res, next) => {
+    try {
+      const post = await Post.findOne({ where: { id: req.params.postId } });
+      if (!post) {
+        res.status(403).send("Not exist post.");
+        return;
+      }
+      await post.removeLikers(req.user?.id);
+      res.json({ PostId: post.id, UserId: req.user?.id });
+    } catch (error) {
+      next(error);
+    }
+  });
 
 export default router;
