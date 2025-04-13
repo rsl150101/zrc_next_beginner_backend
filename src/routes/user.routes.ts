@@ -124,4 +124,82 @@ router.patch("/nickname", isLoggedIn, async (req, res, next) => {
   }
 });
 
+router.patch("/:userId/follow", isLoggedIn, async (req, res, next) => {
+  try {
+    const user = await User.findOne({ where: { id: req.params.userId } });
+    if (!user) {
+      res.status(403).send("Not exist user!");
+      return;
+    }
+    await user.addFollowers(req.user?.id);
+    res.status(200).json({ UserId: parseInt(req.params.userId, 10) });
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.delete("/:userId/follow", isLoggedIn, async (req, res, next) => {
+  try {
+    const user = await User.findOne({ where: { id: req.params.userId } });
+    if (!user) {
+      res.status(403).send("Not exist user!");
+      return;
+    }
+    await user.removeFollowers(req.user?.id);
+    res.status(200).json({ UserId: parseInt(req.params.userId, 10) });
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.delete("/follower/:userId", isLoggedIn, async (req, res, next) => {
+  try {
+    const user = await User.findOne({ where: { id: req.params.userId } });
+    if (!user) {
+      res.status(403).send("Not exist user!");
+      return;
+    }
+    await user.removeFollowings(req.user?.id);
+    res.status(200).json({ UserId: parseInt(req.params.userId, 10) });
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.get("/followers", isLoggedIn, async (req, res, next) => {
+  try {
+    const user = await User.findOne({
+      where: { id: req.user?.id },
+    });
+    if (!user) {
+      res.status(403).send("Not exist user!");
+      return;
+    }
+    const followers = await user.getFollowers({
+      attributes: { exclude: ["password"] },
+    });
+    res.status(200).json(followers);
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.get("/followings", isLoggedIn, async (req, res, next) => {
+  try {
+    const user = await User.findOne({
+      where: { id: req.user?.id },
+    });
+    if (!user) {
+      res.status(403).send("Not exist user!");
+      return;
+    }
+    const followings = await user.getFollowings({
+      attributes: { exclude: ["password"] },
+    });
+    res.status(200).json(followings);
+  } catch (error) {
+    next(error);
+  }
+});
+
 export default router;
