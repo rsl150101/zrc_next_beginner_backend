@@ -2,6 +2,7 @@ import express from "express";
 
 import db from "../models";
 import { isLoggedIn } from "../middlewares/auth";
+import upload from "../middlewares/multer";
 
 const { Post, Comment, Image, User } = db;
 const router = express.Router();
@@ -42,6 +43,27 @@ router.delete("/:postId", isLoggedIn, async (req, res, next) => {
     next(error);
   }
 });
+
+router.post(
+  "/images",
+  isLoggedIn,
+  upload.array("image"),
+  async (req, res, next) => {
+    try {
+      if (req.files) {
+        const images = (req.files as Express.Multer.File[]).map(
+          (file) => file.filename
+        );
+        res.status(201).json(images);
+      } else {
+        res.status(400).json({ message: "No files uploaded." });
+      }
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: "Internal server error." });
+    }
+  }
+);
 
 router.post("/:postId/comment", isLoggedIn, async (req, res, next) => {
   try {
