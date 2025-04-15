@@ -4,6 +4,7 @@ import cors from "cors";
 import cookieParser from "cookie-parser";
 import session from "express-session";
 import passport from "passport";
+import path from "path";
 
 dotenv.config();
 
@@ -25,6 +26,7 @@ db.sequelize
 
 passportConfig();
 
+app.use("/", express.static(path.join(__dirname, "uploads")));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(

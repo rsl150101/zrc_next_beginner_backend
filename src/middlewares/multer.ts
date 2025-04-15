@@ -19,7 +19,7 @@ const storage = multer.diskStorage({
       "utf8"
     ); //* 한글 파일명 인코딩 처리
     const ext = path.extname(file.originalname);
-    cb(null, path.basename(file.originalname, ext) + Date.now() + ext); //* 파일 이름 설정
+    cb(null, path.basename(file.originalname, ext) + "_" + Date.now() + ext); //* 파일 이름 설정
   },
 });
 
