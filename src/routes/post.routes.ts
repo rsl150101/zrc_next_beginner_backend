@@ -3,26 +3,39 @@ import express from "express";
 import db from "../models";
 import { isLoggedIn } from "../middlewares/auth";
 import upload from "../middlewares/multer";
+import Hashtag from "../models/hashtag";
 
 const { Post, Comment, Image, User } = db;
 const router = express.Router();
 
 router.post("/", isLoggedIn, upload.none(), async (req, res, next) => {
   try {
+    const hashtags = req.body.content.match(/#[^\s#]+/g);
     const post = await Post.create({
       nickname: req.user?.nickname,
       content: req.body.content,
       UserId: req.user?.id,
     });
 
-    if (Array.isArray(req.body.image)) {
-      const images = await Promise.all(
-        req.body.image.map((image: string) => Image.create({ src: image }))
+    if (hashtags) {
+      const result = await Promise.all(
+        hashtags.map((tag: string) =>
+          Hashtag.findOrCreate({ where: { name: tag.slice(1).toLowerCase() } })
+        )
       );
-      await post.addImages(images);
-    } else {
-      const image = await Image.create({ src: req.body.image });
-      await post.addImages(image);
+      await post.addHashtags(result.map((v) => v[0]));
+    }
+
+    if (req.body.image) {
+      if (Array.isArray(req.body.image)) {
+        const images = await Promise.all(
+          req.body.image.map((image: string) => Image.create({ src: image }))
+        );
+        await post.addImages(images);
+      } else {
+        const image = await Image.create({ src: req.body.image });
+        await post.addImages(image);
+      }
     }
 
     const fullPost = await Post.findOne({
