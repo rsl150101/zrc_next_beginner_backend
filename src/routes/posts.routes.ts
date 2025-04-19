@@ -1,4 +1,5 @@
 import express from "express";
+import { Op } from "sequelize";
 
 import db from "../models";
 
@@ -6,9 +7,18 @@ const { Post, User, Image, Comment } = db;
 
 const router = express.Router();
 
+interface ILastId {
+  id?: { [Op.lt]: number };
+}
+
 router.get("/", async (req, res, next) => {
   try {
+    const where: ILastId = {};
+    if (parseInt(req.query.lastId as string, 10)) {
+      where.id = { [Op.lt]: parseInt(req.query.lastId as string, 10) };
+    }
     const posts = await Post.findAll({
+      where,
       limit: 10,
       order: [
         ["createdAt", "DESC"],
