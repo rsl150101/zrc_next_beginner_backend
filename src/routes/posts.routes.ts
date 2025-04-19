@@ -9,7 +9,6 @@ const router = express.Router();
 router.get("/", async (req, res, next) => {
   try {
     const posts = await Post.findAll({
-      //   where: { id: lastId },
       limit: 10,
       order: [
         ["createdAt", "DESC"],
@@ -26,6 +25,19 @@ router.get("/", async (req, res, next) => {
           include: [{ model: User, attributes: { exclude: ["password"] } }],
         },
         { model: User, as: "Likers", attributes: ["id"] },
+        {
+          model: Post,
+          as: "Retweet",
+          include: [
+            {
+              model: User,
+              attributes: ["id", "nickname"],
+            },
+            {
+              model: Image,
+            },
+          ],
+        },
       ],
     });
     res.status(200).json(posts);
