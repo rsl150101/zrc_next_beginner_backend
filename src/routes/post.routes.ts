@@ -8,6 +8,49 @@ import Hashtag from "../models/hashtag";
 const { Post, Comment, Image, User } = db;
 const router = express.Router();
 
+router.get("/:postId", async (req, res, next) => {
+  try {
+    const post = await Post.findOne({
+      where: { id: req.params.postId },
+    });
+    if (!post) {
+      res.status(404).send("Not exist post.");
+      return;
+    }
+    const fullPost = await Post.findOne({
+      where: { id: post.id },
+      include: [
+        {
+          model: User,
+          attributes: { exclude: ["password"] },
+        },
+        { model: Image },
+        {
+          model: Comment,
+          include: [{ model: User, attributes: { exclude: ["password"] } }],
+        },
+        { model: User, as: "Likers", attributes: ["id"] },
+        {
+          model: Post,
+          as: "Retweet",
+          include: [
+            {
+              model: User,
+              attributes: ["id", "nickname"],
+            },
+            {
+              model: Image,
+            },
+          ],
+        },
+      ],
+    });
+    res.status(200).json(fullPost);
+  } catch (error) {
+    next(error);
+  }
+});
+
 router.post("/", isLoggedIn, upload.none(), async (req, res, next) => {
   try {
     const hashtags = req.body.content.match(/#[^\s#]+/g);
